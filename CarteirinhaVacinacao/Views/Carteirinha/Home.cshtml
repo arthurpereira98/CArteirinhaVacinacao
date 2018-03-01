@@ -1,0 +1,79 @@
+﻿@using CarteirinhaVacinacao.Models
+@using CarteirinhaVacinacao.ViewModel
+@model CarteirinhaVacinacao.ViewModel.BoardPessoa
+
+@{
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/Sistema/Shared/_Layout.cshtml";
+}
+<div class="contairner-fluid">
+    <div class="row">
+        <div class="col-md-6 col-xs-12 col-sm-12" style="padding-top: 5px; margin-top: 20px;">
+            <a href="/Carteirinha/NovaPessoaVacinada?IdPessoa=@Model.Pessoa.IdPessoa" style="btn btn-default"><div style="background-color: #0275d8; border-radius: 5px; color: #fff; font-weight: bold; text-align: Center; line-height:40px; font-size: 15px; margin-bottom: 25px;">Vincular Vacina</div></a>
+            <div style="background-color: #f9f9f9; border-radius: 5px 5px 0 0; color: #000; font-weight: 600; text-align: Center; line-height:40px; font-size: 15px;">
+                ORDENS ATIVAS
+            </div>
+            <table class="table table-striped">
+                <tr>
+                    <th>#</th>
+                    <th>Tipo</th>
+                    <th>Aplicado</th>
+                    <th>Vencimento</th>
+                </tr>
+                @foreach (PessoaVacinada pv in Model.PessoasVacinadas)
+                {
+                    <tr>
+                        <td>@pv.IdPessoaVacinada</td>
+                        <td>@pv.Vacinas.Select(p => p.Nome) </td>
+                        <td>@pv.DataAplicacao </td>
+                        <td>@pv.DataVencimento</td>
+                    </tr>
+                }
+            </table>
+        </div>
+        <div class="col-md-6 col-xs-12 col-sm-12" style="padding-left:20px; border-left: 1px solid #ccc; margin-top: 10px;">
+            <h2>Dados do Usuario</h2>
+
+            <form asp-action="CadastrarPessoa" method="post">
+                <div class="form-horizontal">
+                    <h4>Dados</h4>
+                    <hr />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Pessoa.IdPessoa" class="col-md-2 control-label">ID Pessoa</label>
+                        <div class="col-md-10">
+                            <input type="number" id="IdPessoa" name="IdCliente" class="form-control" value="@Model.Pessoa.IdPessoa" readonly/>
+                            <span asp-validation-for="Pessoa.IdPessoa" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Pessoa.Nome" class="col-md-2 control-label">Nome*</label>
+                        <div class="col-md-10">
+                            <input name="Nome" id="Nome" class="form-control" value="@Model.Pessoa.Nome" required/> 
+                            <span asp-validation-for="Pessoa.Nome" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Pessoa.CPF" class="col-md-2 control-label">CPF*</label>
+                        <div class="col-md-10">
+                            <input name="CPF" id="CPF" class="form-control" required minlength=11 maxlength=11 value="@Model.Pessoa.CPF"/>
+                            <span asp-validation-for="Pessoa.CPF" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Pessoa.Nascimento" class="col-md-2 control-label">CPF*</label>
+                        <div class="col-md-10">
+                            <input name="Nascimento" id="Nascimento" class="form-control" required minlength=11 maxlength=11 value="@Model.Pessoa.Nascimento"/>
+                            <span asp-validation-for="Pessoa.Nascimento" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Editar" class="btn btn-default" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
