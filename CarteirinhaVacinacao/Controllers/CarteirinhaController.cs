@@ -84,9 +84,9 @@ namespace CarteirinhaVacinacao.Controllers
         public IActionResult Vacinados(int idPessoa)
         {
             BoardPessoa _bp = new BoardPessoa();
-            
+
             if (!CheckSession()) { return RedirectToAction("Login", "Sistema"); }
-            if(idPessoa == 0)
+            if (idPessoa == 0)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -95,7 +95,7 @@ namespace CarteirinhaVacinacao.Controllers
             return View(_bp);
         }
 
-       [HttpGet]
+        [HttpGet]
         public IActionResult PessoaVacinada(int IdPessoa)
         {
             BoardPessoaVacinada _bpv = new BoardPessoaVacinada();
@@ -105,33 +105,21 @@ namespace CarteirinhaVacinacao.Controllers
         }
 
         [HttpPost]
-        public IActionResult PessoaVacinada(BoardPessoaVacinada _bpv)
+        public IActionResult PessoaVacinada([FromBody]PessoaVacinada pv)
         {
             if (!CheckSession()) { return RedirectToAction("Index", "Home"); }
-            PessoaVacinada pv = ObtemPessoaVacinada(_bpv);
+            if (pv.IdPessoaVacinada == 0)
+            {
+                vacinacaoContext.PessoasVacinadas.Add(pv);
+                vacinacaoContext.SaveChanges();
+            }
             vacinacaoContext.PessoasVacinadas.Add(pv);
             vacinacaoContext.SaveChanges();
 
             return RedirectToAction("Home", "Carteirinha");
         }
 
-        public PessoaVacinada ObtemPessoaVacinada(BoardPessoaVacinada _bpv)
-        {
-            PessoaVacinada pv = new PessoaVacinada();
-            if (_bpv != null)
-            {                
-                pv.IdPessoaVacinada = _bpv.PessoaVacinada.IdPessoaVacinada;
-                pv.IdPessoa = _bpv.Pessoa.IdPessoa;
-                //pv.Vacinas.Where(p => p.IdVacina ==  _bpv.Vacinas.)
-                pv.DataAplicacao = DateTime.Now;
-                pv.DataVencimento = pv.DataAplicacao.AddYears(10);
-
-                return pv;
-            }
-            return null;
-        }
-
-            public Boolean CheckSession()
+        public Boolean CheckSession()
         {
             string UId = HttpContext.Session.GetString("UserId");
             if (!String.IsNullOrEmpty(UId))
