@@ -1,0 +1,60 @@
+﻿@using CarteirinhaVacinacao.Models
+@using CarteirinhaVacinacao.ViewModel
+@model CarteirinhaVacinacao.ViewModel.BoardPessoaVacinada
+
+@{
+    ViewData["Title"] = "Vacinar Pessoa";
+    Layout = "~/Views/Sistema/Shared/_Layout.cshtml";
+}
+<h2>Vacinacao Pessoa.</h2>
+
+<form asp-action="NovaPessoaVacinada" method="post">
+    <div class="form-horizontal">
+         <hr />
+        <div class="form-group">
+            <label asp-for="PessoaVacinada.IdPessoaVacinada" class="col-md-2 control-label">ID Pessoa Vacinada</label>
+            <div class="col-md-10">
+                <input asp-for="PessoaVacinada.IdPessoaVacinada" class="form-control" readonly value="0"/>
+                <span asp-validation-for="PessoaVacinada.IdPessoaVacinada" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="IdCliente" class="control-label col-md-2">Id</label>
+            <div class="col-md-10"> 
+                <input type="number" id="IdClinte" name="IdCliente" class="form-control" readonly value="@Model.Pessoa.IdPessoa">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="Nome" class="control-label col-md-2">Nome</label>
+            <div class="col-md-10"> 
+                <input type="text" id="Nome" name="Nome" class="form-control" readonly value="@Model.Pessoa.Nome">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="IdVacina" class="col-md-2 control-label">Vacina</label>
+            <div class="col-md-10">               
+                <select id="IdVacina" name="IdVacina" class="form-control" required>
+                    <option value="0">Selecione a Vacina</option>
+                    @foreach (Vacina vac in Model.Vacinas)
+                    {
+                        <option value="@vac.IdVacina">@vac.Nome</option>
+                    }
+
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="DataVencimento" class="control-label col-md-2">Data Vencimento</label>
+                    <div class="col-md-10">
+                        <input name="DataVencimento" id="DataVencimento" class="form-control">
+                        <input asp-for="PessoaVacinada.DataVencimento" type="datetime-local" class="form-control"  name="DataVencimento" id="DataVencimento" />
+                    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-md-2"></div>
+            <div class="col-md-10">
+                <button class="btn btn-default" type="submit" value="submit">Vacinar Pessoa</button>
+            </div>
+        </div> 
+        </div>
+    </div>
+</form>

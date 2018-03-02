@@ -95,6 +95,42 @@ namespace CarteirinhaVacinacao.Controllers
             return View(_bp);
         }
 
+       [HttpGet]
+        public IActionResult PessoaVacinada(int IdPessoa)
+        {
+            BoardPessoaVacinada _bpv = new BoardPessoaVacinada();
+            _bpv.Vacinas.ToList();
+            _bpv.Pessoa = vacinacaoContext.Pessoas.Where(p => p.IdPessoa == IdPessoa).FirstOrDefault();
+            return View(_bpv);
+        }
+
+        [HttpPost]
+        public IActionResult PessoaVacinada(BoardPessoaVacinada _bpv)
+        {
+            if (!CheckSession()) { return RedirectToAction("Index", "Home"); }
+            PessoaVacinada pv = ObtemPessoaVacinada(_bpv);
+            vacinacaoContext.PessoasVacinadas.Add(pv);
+            vacinacaoContext.SaveChanges();
+
+            return RedirectToAction("Home", "Carteirinha");
+        }
+
+        public PessoaVacinada ObtemPessoaVacinada(BoardPessoaVacinada _bpv)
+        {
+            PessoaVacinada pv = new PessoaVacinada();
+            if (_bpv != null)
+            {                
+                pv.IdPessoaVacinada = _bpv.PessoaVacinada.IdPessoaVacinada;
+                pv.IdPessoa = _bpv.Pessoa.IdPessoa;
+                //pv.Vacinas.Where(p => p.IdVacina ==  _bpv.Vacinas.)
+                pv.DataAplicacao = DateTime.Now;
+                pv.DataVencimento = pv.DataAplicacao.AddYears(10);
+
+                return pv;
+            }
+            return null;
+        }
+
             public Boolean CheckSession()
         {
             string UId = HttpContext.Session.GetString("UserId");
