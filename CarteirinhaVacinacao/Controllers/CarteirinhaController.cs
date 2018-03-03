@@ -85,7 +85,11 @@ namespace CarteirinhaVacinacao.Controllers
         public IActionResult MainPage(int idPessoa)
         {
             BoardPessoa _bp = new BoardPessoa();
-            if (!CheckSession() || idPessoa == 0) { return RedirectToAction("Index", "Home"); }
+            if (!CheckSession() || idPessoa == 0) { return RedirectToAction("Index", "Home"); }           
+            if (idPessoa == 0)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             _bp.Pessoa = vacinacaoContext.Pessoas.Where(p => p.IdPessoa == idPessoa).FirstOrDefault();
             _bp.PessoasVacinadas = vacinacaoContext.PessoasVacinadas.Where(p => p.IdPessoa == idPessoa).ToList();
             return View(_bp);
@@ -103,6 +107,7 @@ namespace CarteirinhaVacinacao.Controllers
         [HttpPost]
         public IActionResult NovaPessoaVacinada([FromBody]PessoaVacinada pv)
         {
+            if (!CheckSession()) { return RedirectToAction("Index", "Home"); }
             if (pv.IdPessoaVacinada == 0)
             {
                 vacinacaoContext.PessoasVacinadas.Add(pv);
@@ -110,7 +115,6 @@ namespace CarteirinhaVacinacao.Controllers
             }
             vacinacaoContext.PessoasVacinadas.Add(pv);
             vacinacaoContext.SaveChanges();
-
             return RedirectToAction("MainPage", "Carteirinha");
         }
 
