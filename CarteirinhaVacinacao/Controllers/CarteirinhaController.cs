@@ -7,21 +7,25 @@ using Microsoft.AspNetCore.Http;
 using CarteirinhaVacinacao.Models;
 using CarteirinhaVacinacao.ViewModel;
 using static CarteirinhaVacinacao.Classes.Utilites;
+using System.IO;
+using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Hosting;
 
 namespace CarteirinhaVacinacao.Controllers
 {
     public class CarteirinhaController : Controller
     {
+        private readonly IHostingEnvironment _hostingEnvironment;
+
         private VacinacaoContext vacinacaoContext;
 
-        public CarteirinhaController(VacinacaoContext v)
+        public CarteirinhaController(IHostingEnvironment hostingEnvironment)
         {
-
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public IActionResult Index()
         {
-            if (!CheckSession()) { return RedirectToAction("Login", "Vacina"); }
             return View();
         }
         [HttpGet]
@@ -31,72 +35,64 @@ namespace CarteirinhaVacinacao.Controllers
         }
 
         [HttpPost]
-        public IActionResult CadastrarPessoa(Pessoa pessoa)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CadastrarPessoa([Bind("IdPessoa,Login,Password,Salt,Nome,Nascimento,CPF")]Pessoa pessoa)
         {
-            if (vacinacaoContext.Pessoas.Where(p => p.Login == pessoa.Login).Count() == 0)
+            if (ModelState.IsValid)
             {
-                Random random = new Random();
-                pessoa.Salt = random.Next(11111111, 99999999).ToString();
-                pessoa.Password = HashPass(pessoa.Password, pessoa.Salt);
-                vacinacaoContext.Add(pessoa);
-                vacinacaoContext.SaveChanges();
-            }
-            else
-            {
-                return RedirectToAction("CadastrarUsuario", "Sistema");
-            }
-            return RedirectToAction("Login", "Sistema");
-        }
-
-        [HttpGet]
-        public IActionResult Home()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Login(Pessoa pessoa)
-        {
-            if (pessoa.Login != null && pessoa.Login != "" && pessoa.Login != "")
-            {
-                Pessoa _pessoa = vacinacaoContext.Pessoas.Where(p => p.Login == pessoa.Login).FirstOrDefault();
-                pessoa.Password = HashPass(pessoa.Password, _pessoa.Salt);
-                if (pessoa.Password == _pessoa.Password)
+                var files = HttpContext.Request.Form.Files;
+                foreach (var Image in files)
                 {
-                    HttpContext.Session.SetString("HashPass", pessoa.Password);
-                    HttpContext.Session.SetString("UserId", _pessoa.IdPessoa.ToString());
+                    if (Image != null && Image.Length > 0)
+                    {
+                        var file = Image;
+                        string webRootPath = _hostingEnvironment.WebRootPath;
+                        var uploads = Path.Combine(webRootPath, "uploads\\img\\pessoas");
+
+                        if (file.Length > 0)
+                        {
+                            var fileName = ContentDispositionHeaderValue.Parse
+                                (file.ContentDisposition).FileName.Trim('"');
+
+                            System.Console.WriteLine(fileName);
+                            using (var fileStream = new FileStream(Path.Combine(uploads, file.FileName), FileMode.Create))
+                            {
+                                await file.CopyToAsync(fileStream);
+                                pessoa.ImageName = file.FileName;
+                            }
+                            var imageUrl = Path.Combine(uploads + file.FileName);
+
+                        }
+                    }
+                }
+                if (vacinacaoContext.Pessoas.Where(p => p.Login == pessoa.Login).Count() == 0)
+                {
+                    Random random = new Random();
+                    pessoa.Salt = random.Next(11111111, 99999999).ToString();
+                    pessoa.Password = HashPass(pessoa.Password, pessoa.Salt);
+                    vacinacaoContext.Add(pessoa);
+                    await  vacinacaoContext.SaveChangesAsync();
                 }
                 else
                 {
-                    return RedirectToAction("Index", "Home");
-                }
+                    return RedirectToAction("CadastrarUsuario", "Sistema");
+                }                
             }
-            return RedirectToAction("Vacinados", "Carteirinha", new { IdPessoa = pessoa.IdPessoa });
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
-        public IActionResult Vacinados()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Vacinados(int idPessoa)
+        public IActionResult MainPage(int idPessoa)
         {
             BoardPessoa _bp = new BoardPessoa();
-            
-            if (!CheckSession()) { return RedirectToAction("Login", "Sistema"); }
-            if(idPessoa == 0)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            if (!CheckSession() || idPessoa == 0) { return RedirectToAction("Index", "Home"); }
             _bp.Pessoa = vacinacaoContext.Pessoas.Where(p => p.IdPessoa == idPessoa).FirstOrDefault();
             _bp.PessoasVacinadas = vacinacaoContext.PessoasVacinadas.Where(p => p.IdPessoa == idPessoa).ToList();
             return View(_bp);
-        }
+        }           
 
-       [HttpGet]
-        public IActionResult PessoaVacinada(int IdPessoa)
+        [HttpGet]
+        public IActionResult NovaPessoaVacinada(int IdPessoa)
         {
             BoardPessoaVacinada _bpv = new BoardPessoaVacinada();
             _bpv.Vacinas.ToList();
@@ -105,33 +101,20 @@ namespace CarteirinhaVacinacao.Controllers
         }
 
         [HttpPost]
-        public IActionResult PessoaVacinada(BoardPessoaVacinada _bpv)
+        public IActionResult NovaPessoaVacinada([FromBody]PessoaVacinada pv)
         {
-            if (!CheckSession()) { return RedirectToAction("Index", "Home"); }
-            PessoaVacinada pv = ObtemPessoaVacinada(_bpv);
+            if (pv.IdPessoaVacinada == 0)
+            {
+                vacinacaoContext.PessoasVacinadas.Add(pv);
+                vacinacaoContext.SaveChanges();
+            }
             vacinacaoContext.PessoasVacinadas.Add(pv);
             vacinacaoContext.SaveChanges();
 
-            return RedirectToAction("Home", "Carteirinha");
+            return RedirectToAction("MainPage", "Carteirinha");
         }
 
-        public PessoaVacinada ObtemPessoaVacinada(BoardPessoaVacinada _bpv)
-        {
-            PessoaVacinada pv = new PessoaVacinada();
-            if (_bpv != null)
-            {                
-                pv.IdPessoaVacinada = _bpv.PessoaVacinada.IdPessoaVacinada;
-                pv.IdPessoa = _bpv.Pessoa.IdPessoa;
-                //pv.Vacinas.Where(p => p.IdVacina ==  _bpv.Vacinas.)
-                pv.DataAplicacao = DateTime.Now;
-                pv.DataVencimento = pv.DataAplicacao.AddYears(10);
-
-                return pv;
-            }
-            return null;
-        }
-
-            public Boolean CheckSession()
+        public Boolean CheckSession()
         {
             string UId = HttpContext.Session.GetString("UserId");
             if (!String.IsNullOrEmpty(UId))
