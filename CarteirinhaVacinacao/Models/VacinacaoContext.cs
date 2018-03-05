@@ -20,10 +20,15 @@ namespace CarteirinhaVacinacao.Models
                 .HasKey(p => p.IdVacina);
             modelBuilder.Entity<PessoaVacinada>()
                 .HasKey(p => p.IdPessoaVacinada);
+
+            modelBuilder.Entity<Pessoa>().ToTable("Pessoa");
+            modelBuilder.Entity<Vacina>().ToTable("Vacina");
+            modelBuilder.Entity<PessoaVacinada>().ToTable("PessoaVacinada");
         }
 
         public DbSet<Pessoa> Pessoas { get; set; }
         public DbSet<Vacina> Vacinas { get; set; }
-        public DbSet<PessoaVacinada> PessoasVacinadas { get; set; }
+        public DbSet<PessoaVacinada> PessoasVacinadas { get; set; }        
+
     }
 }

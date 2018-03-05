@@ -9,7 +9,7 @@
 <div class="contairner-fluid">
     <div class="row">
         <div class="col-md-6 col-xs-12 col-sm-12" style="padding-top: 5px; margin-top: 20px;">
-            <a href="/Carteirinha/NovaPessoaVacinada?IdPessoa=@Model.Pessoa.IdPessoa" style="btn btn-default"><div style="background-color: #0275d8; border-radius: 5px; color: #fff; font-weight: bold; text-align: Center; line-height:40px; font-size: 15px; margin-bottom: 25px;">Vincular Vacina</div></a>
+            <a href="/Carteirinha/NovaPessoaVacinada?IdPessoa=@Model.Pessoa.IdPessoa" class="btn btn-default"><div style="background-color: #0275d8; border-radius: 5px; color: #fff; font-weight: bold; text-align: Center; line-height:40px; font-size: 15px; margin-bottom: 25px;">Vincular Vacina</div></a>
             <div style="background-color: #f9f9f9; border-radius: 5px 5px 0 0; color: #000; font-weight: 600; text-align: Center; line-height:40px; font-size: 15px;">
                 ORDENS ATIVAS
             </div>
@@ -24,7 +24,7 @@
                 {
                     <tr>
                         <td>@pv.IdPessoaVacinada</td>
-                        <td>@pv.Vacinas.Select(p => p.Nome) </td>
+                        <td>@pv.Vacina.Nome </td>
                         <td>@pv.DataAplicacao </td>
                         <td>@pv.DataVencimento</td>
                     </tr>

@@ -9,10 +9,10 @@ namespace CarteirinhaVacinacao.Models
     public class PessoaVacinada
     {
         public int IdPessoaVacinada { get; set; }
-        [Required]
-        public List<Pessoa> Pessoa { get; set; }
-        [Required]
-        public ICollection<Vacina> Vacinas { get; set; }
+        public int IdPessoa { get; set; }
+        public int IdVacina { get; set; }        
+        public Pessoa Pessoa { get; set; }        
+        public Vacina Vacina { get; set; }
         [DataType(DataType.Date)]
         [Required]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

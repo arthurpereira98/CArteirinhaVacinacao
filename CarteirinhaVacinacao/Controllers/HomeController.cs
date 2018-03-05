@@ -23,24 +23,28 @@ namespace CarteirinhaVacinacao.Controllers
         [HttpPost]
         public IActionResult Index(Pessoa pessoa)
         {
-            if (pessoa.Login != null && pessoa.Login != "" && pessoa.Login != "")
+            if (ModelState.IsValid)
             {
-                Pessoa _pessoa = vacinacaoContext.Pessoas.Where(p => p.Login == pessoa.Login).FirstOrDefault();
-                if (_pessoa != null)
+                if (pessoa.Login != null && pessoa.Login != "" && pessoa.Login != "")
                 {
-                    pessoa.Password = HashPass(pessoa.Password, _pessoa.Salt);
-                    if (pessoa.Password == _pessoa.Password)
+                    Pessoa _pessoa = vacinacaoContext.Pessoas.Where(p => p.Login == pessoa.Login).FirstOrDefault();
+                    if (_pessoa != null)
                     {
-                        HttpContext.Session.SetString("HashPass", pessoa.Password);
-                        HttpContext.Session.SetString("UserId", _pessoa.IdPessoa.ToString());
+                        pessoa.Password = HashPass(pessoa.Password, _pessoa.Salt);
+                        if (pessoa.Password == _pessoa.Password)
+                        {
+                            HttpContext.Session.SetString("HashPass", pessoa.Password);
+                            HttpContext.Session.SetString("UserId", _pessoa.IdPessoa.ToString());
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
                     }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }                   
+                    return RedirectToAction("MainPage", "Carteirinha", new { IdPessoa = pessoa.IdPessoa });
                 }
-                return RedirectToAction("MainPage", "Carteirinha", new { IdPessoa = pessoa.IdPessoa });
             }
+
             return RedirectToAction("Index", "Home");
         }
 
