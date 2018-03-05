@@ -13,7 +13,12 @@ namespace CarteirinhaVacinacao.Controllers
 {
     public class HomeController : Controller
     {
-        private VacinacaoContext vacinacaoContext;
+        private VacinacaoContext _vacinacaoContext;
+
+        public HomeController(VacinacaoContext vacinacaoContext)
+        {
+            _vacinacaoContext = vacinacaoContext;
+        }
 
         public IActionResult Index()
         {
@@ -27,7 +32,7 @@ namespace CarteirinhaVacinacao.Controllers
             {
                 if (pessoa.Login != null && pessoa.Login != "" && pessoa.Login != "")
                 {
-                    Pessoa _pessoa = vacinacaoContext.Pessoas.Where(p => p.Login == pessoa.Login).FirstOrDefault();
+                    Pessoa _pessoa = _vacinacaoContext.Pessoas.Where(p => p.Login == pessoa.Login).FirstOrDefault();
                     if (_pessoa != null)
                     {
                         pessoa.Password = HashPass(pessoa.Password, _pessoa.Salt);

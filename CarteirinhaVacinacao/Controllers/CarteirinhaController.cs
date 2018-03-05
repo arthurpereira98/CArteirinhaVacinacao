@@ -66,13 +66,13 @@ namespace CarteirinhaVacinacao.Controllers
                         }
                     }
                 }
-                if (vacinacaoContext.Pessoas.Where(p => p.Login == pessoa.Login).Count() == 0)
+                if (_vacinacaoContext.Pessoas.Where(p => p.Login == pessoa.Login).Count() == 0)
                 {
                     Random random = new Random();
                     pessoa.Salt = random.Next(11111111, 99999999).ToString();
                     pessoa.Password = HashPass(pessoa.Password, pessoa.Salt);
-                    vacinacaoContext.Add(pessoa);
-                    await vacinacaoContext.SaveChangesAsync();
+                    _vacinacaoContext.Add(pessoa);
+                    await _vacinacaoContext.SaveChangesAsync();
                 }
                 else
                 {
@@ -87,9 +87,9 @@ namespace CarteirinhaVacinacao.Controllers
         {
             BoardPessoa _bp = new BoardPessoa();
             if (!CheckSession() && idPessoa == 0) { return RedirectToAction("Index", "Home"); }
-            Pessoa pessoa = vacinacaoContext.Pessoas.Where(x => x.IdPessoa == idPessoa).FirstOrDefault();
-            _bp.Pessoa = vacinacaoContext.Pessoas.Where(p => p.IdPessoa == idPessoa).FirstOrDefault();
-            _bp.PessoasVacinadas = vacinacaoContext.PessoasVacinadas.Where(x => x.IdPessoa == idPessoa).ToList();
+            Pessoa pessoa = _vacinacaoContext.Pessoas.Where(x => x.IdPessoa == idPessoa).FirstOrDefault();
+            _bp.Pessoa = _vacinacaoContext.Pessoas.Where(p => p.IdPessoa == idPessoa).FirstOrDefault();
+            _bp.PessoasVacinadas = _vacinacaoContext.PessoasVacinadas.Where(x => x.IdPessoa == idPessoa).ToList();
             return View(_bp);
         }
 
@@ -98,7 +98,7 @@ namespace CarteirinhaVacinacao.Controllers
         {
             BoardPessoaVacinada _bpv = new BoardPessoaVacinada();
             _bpv.Vacinas.ToList();
-            _bpv.Pessoa = vacinacaoContext.Pessoas.Where(p => p.IdPessoa == IdPessoa).FirstOrDefault();
+            _bpv.Pessoa = _vacinacaoContext.Pessoas.Where(p => p.IdPessoa == IdPessoa).FirstOrDefault();
             return View(_bpv);
         }
 
@@ -112,8 +112,8 @@ namespace CarteirinhaVacinacao.Controllers
                 {
                     if (pv.IdPessoaVacinada == 0)
                     {
-                        vacinacaoContext.PessoasVacinadas.Add(pv);
-                        await vacinacaoContext.SaveChangesAsync();
+                        _vacinacaoContext.PessoasVacinadas.Add(pv);
+                        await _vacinacaoContext.SaveChangesAsync();
                     }
                     return RedirectToAction("MainPage", "Carteirinha", new { IdPessoa = pv.IdPessoa });
                 }
@@ -128,7 +128,7 @@ namespace CarteirinhaVacinacao.Controllers
             if (!String.IsNullOrEmpty(UId))
             {
                 int IdPessoa = Int32.Parse(UId);
-                string uPHash = vacinacaoContext.Pessoas.Where(p => p.IdPessoa == IdPessoa).Select(p => p.Password).FirstOrDefault();
+                string uPHash = _vacinacaoContext.Pessoas.Where(p => p.IdPessoa == IdPessoa).Select(p => p.Password).FirstOrDefault();
                 if (uPHash == HttpContext.Session.GetString("HashPass"))
                 {
                     return true;
