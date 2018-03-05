@@ -22,7 +22,6 @@ namespace CarteirinhaVacinacao.Models
         [Required]
         [StringLength(11)]
         public string CPF { get; set; }
-        [Required(ErrorMessage = "Please Upload a Valid Image File. Only jpg format allowed")]
         [Display(Name = "Upload Product Image")]
         [FileExtensions(Extensions = "jpg")]
         public string ImageName { get; set; }

@@ -90,8 +90,9 @@ namespace CarteirinhaVacinacao.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
+            Pessoa pessoa = vacinacaoContext.Pessoas.Where(x => x.IdPessoa == idPessoa).FirstOrDefault();
             _bp.Pessoa = vacinacaoContext.Pessoas.Where(p => p.IdPessoa == idPessoa).FirstOrDefault();
-            _bp.PessoasVacinadas = vacinacaoContext.PessoasVacinadas.Where(p => p.IdPessoa == idPessoa).ToList();
+            _bp.PessoasVacinadas = vacinacaoContext.PessoasVacinadas.Where(x => x.Pessoa.Equals(pessoa)).ToList();
             return View(_bp);
         }           
 
@@ -113,9 +114,10 @@ namespace CarteirinhaVacinacao.Controllers
                 vacinacaoContext.PessoasVacinadas.Add(pv);
                 vacinacaoContext.SaveChanges();
             }
+           // Pessoa pessoa = vacinacaoContext.Pessoas.Where(x => x.IdPessoa == pv.Pessoa.)
             vacinacaoContext.PessoasVacinadas.Add(pv);
             vacinacaoContext.SaveChanges();
-            return RedirectToAction("MainPage", "Carteirinha");
+            //return RedirectToAction("MainPage", "Carteirinha", new { IdPessoa = pv.IdPessoa });
         }
 
         public Boolean CheckSession()
