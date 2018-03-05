@@ -18,7 +18,7 @@ namespace CarteirinhaVacinacao.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
 
-        private VacinacaoContext _vacinacaoContext;        
+        private VacinacaoContext _vacinacaoContext;
 
         public CarteirinhaController(IHostingEnvironment hostingEnvironment, VacinacaoContext vacinacaoContext)
         {
@@ -86,12 +86,33 @@ namespace CarteirinhaVacinacao.Controllers
         [HttpGet]
         public IActionResult MainPage(int idPessoa)
         {
-            ViewModelPessoa _bp = new ViewModelPessoa();
+            ViewModelPessoa _vmp = new ViewModelPessoa();
             if (!CheckSession() && idPessoa == 0) { return RedirectToAction("Index", "Home"); }
             Pessoa pessoa = _vacinacaoContext.Pessoas.Where(x => x.IdPessoa == idPessoa).FirstOrDefault();
-            _bp.Pessoa = _vacinacaoContext.Pessoas.Where(p => p.IdPessoa == idPessoa).FirstOrDefault();
-            _bp.PessoasVacinadas = _vacinacaoContext.PessoasVacinadas.Where(x => x.IdPessoa == idPessoa).ToList();
-            return View(_bp);
+            _vmp.Pessoa = _vacinacaoContext.Pessoas.Where(p => p.IdPessoa == idPessoa).FirstOrDefault();
+            _vmp.PessoasVacinadas = _vacinacaoContext.PessoasVacinadas.Where(x => x.IdPessoa == idPessoa).ToList();
+            _vmp.Vacina = _vacinacaoContext.Vacinas.Where(v => v.IdVacina == _vmp.Vacina.IdVacina).FirstOrDefault();
+            return View(_vmp);
+        }
+
+        [HttpGet]
+        public IActionResult NovaVacina()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult NovaVacina(Vacina vacina)
+        {
+            if (ModelState.IsValid)
+            {
+                if(vacina.IdVacina == 0)
+                {
+                    _vacinacaoContext.Vacinas.Add(vacina);
+                    _vacinacaoContext.SaveChanges();
+                }                
+            }
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -104,22 +125,26 @@ namespace CarteirinhaVacinacao.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> NovaPessoaVacinada([FromBody][Bind("IdPessoaVacina,IdPessoa,IdVacina,DataAplicacao,DataVencimento")]PessoaVacinada pv)
+        public IActionResult NovaPessoaVacinada(PessoaVacinada pv)
         {
             if (!CheckSession()) { return RedirectToAction("Index", "Home"); }
             if (ModelState.IsValid)
             {
                 if (pv.IdPessoa != 0 && pv.IdVacina != 0)
                 {
+                    pv.Pessoa = _vacinacaoContext.Pessoas.Where(p => p.IdPessoa == pv.IdPessoa).FirstOrDefault();
+                    pv.Vacina = _vacinacaoContext.Vacinas.Where(v => v.IdVacina == pv.IdVacina).FirstOrDefault();
+                    pv.DataAplicacao = DateTime.Now;
+                    pv.DataVencimento = pv.DataAplicacao.AddYears(10);
                     if (pv.IdPessoaVacinada == 0)
                     {
                         _vacinacaoContext.PessoasVacinadas.Add(pv);
-                        await _vacinacaoContext.SaveChangesAsync();
+                        _vacinacaoContext.SaveChangesAsync();
                     }
                     return RedirectToAction("MainPage", "Carteirinha", new { IdPessoa = pv.IdPessoa });
                 }
 
-            }            
+            }
             return RedirectToAction("Index", "Home");
         }
 

@@ -9,6 +9,7 @@ namespace CarteirinhaVacinacao.ViewModel
     public class ViewModelPessoa
     {
         public Pessoa Pessoa { get; set; }
-        public List<PessoaVacinada> PessoasVacinadas { get; set; }        
+        public List<PessoaVacinada> PessoasVacinadas { get; set; }  
+        public Vacina Vacina { get; set; }
     }
 }

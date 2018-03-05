@@ -11,6 +11,5 @@ namespace CarteirinhaVacinacao.Models
         public int IdVacina { get; set; }
         [Required]
         public string Nome { get; set; }
-
     }
 }
