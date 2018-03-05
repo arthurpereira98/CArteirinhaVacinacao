@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using CarteirinhaVacinacao.Models;
+using Microsoft.AspNetCore.Session;
 using CarteirinhaVacinacao.ViewModel;
-using static CarteirinhaVacinacao.Classes.Utilites;
+using static CarteirinhaVacinacao.Utilites.Utilites;
 using System.IO;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Hosting;
@@ -48,7 +49,7 @@ namespace CarteirinhaVacinacao.Controllers
                     {
                         var file = Image;
                         string webRootPath = _hostingEnvironment.WebRootPath;
-                        var uploads = Path.Combine(webRootPath, "uploads\\img\\pessoas");
+                        var uploads = Path.Combine(webRootPath, "Uploads\\Pessoas");
 
                         if (file.Length > 0)
                         {
@@ -85,7 +86,7 @@ namespace CarteirinhaVacinacao.Controllers
         [HttpGet]
         public IActionResult MainPage(int idPessoa)
         {
-            BoardPessoa _bp = new BoardPessoa();
+            ViewModelPessoa _bp = new ViewModelPessoa();
             if (!CheckSession() && idPessoa == 0) { return RedirectToAction("Index", "Home"); }
             Pessoa pessoa = _vacinacaoContext.Pessoas.Where(x => x.IdPessoa == idPessoa).FirstOrDefault();
             _bp.Pessoa = _vacinacaoContext.Pessoas.Where(p => p.IdPessoa == idPessoa).FirstOrDefault();
@@ -96,10 +97,10 @@ namespace CarteirinhaVacinacao.Controllers
         [HttpGet]
         public IActionResult NovaPessoaVacinada(int IdPessoa)
         {
-            BoardPessoaVacinada _bpv = new BoardPessoaVacinada();
-            _bpv.Vacinas.ToList();
-            _bpv.Pessoa = _vacinacaoContext.Pessoas.Where(p => p.IdPessoa == IdPessoa).FirstOrDefault();
-            return View(_bpv);
+            ViewModelPessoaVacinada _vmpv = new ViewModelPessoaVacinada();
+            _vmpv.Vacinas = _vacinacaoContext.Vacinas.ToList();
+            _vmpv.Pessoa = _vacinacaoContext.Pessoas.Where(p => p.IdPessoa == IdPessoa).FirstOrDefault();
+            return View(_vmpv);
         }
 
         [HttpPost]

@@ -6,9 +6,10 @@ using CarteirinhaVacinacao.Models;
 
 namespace CarteirinhaVacinacao.ViewModel
 {
-    public class BoardPessoa
+    public class ViewModelPessoaVacinada
     {
         public Pessoa Pessoa { get; set; }
-        public List<PessoaVacinada> PessoasVacinadas { get; set; }        
+        public List<Vacina> Vacinas { get; set; }
+        public PessoaVacinada PessoaVacinada { get; set; }
     }
 }

@@ -4,10 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Session;
 using Microsoft.AspNetCore.Http;
 using CarteirinhaVacinacao.Models;
 using CarteirinhaVacinacao.ViewModel;
-using static CarteirinhaVacinacao.Classes.Utilites;
+using static CarteirinhaVacinacao.Utilites.Utilites;
 
 namespace CarteirinhaVacinacao.Controllers
 {
@@ -28,26 +29,23 @@ namespace CarteirinhaVacinacao.Controllers
         [HttpPost]
         public IActionResult Index(Pessoa pessoa)
         {
-            if (ModelState.IsValid)
+            if (pessoa.Login != null && pessoa.Login != "" && pessoa.Login != "")
             {
-                if (pessoa.Login != null && pessoa.Login != "" && pessoa.Login != "")
+                Pessoa _pessoa = _vacinacaoContext.Pessoas.Where(p => p.Login == pessoa.Login).FirstOrDefault();
+                if (_pessoa != null)
                 {
-                    Pessoa _pessoa = _vacinacaoContext.Pessoas.Where(p => p.Login == pessoa.Login).FirstOrDefault();
-                    if (_pessoa != null)
+                    pessoa.Password = HashPass(pessoa.Password, _pessoa.Salt);
+                    if (pessoa.Password == _pessoa.Password)
                     {
-                        pessoa.Password = HashPass(pessoa.Password, _pessoa.Salt);
-                        if (pessoa.Password == _pessoa.Password)
-                        {
-                            HttpContext.Session.SetString("HashPass", pessoa.Password);
-                            HttpContext.Session.SetString("UserId", _pessoa.IdPessoa.ToString());
-                        }
-                        else
-                        {
-                            return RedirectToAction("Index", "Home");
-                        }
+                        HttpContext.Session.SetString("HashPass", pessoa.Password);
+                        HttpContext.Session.SetString("UserId", _pessoa.IdPessoa.ToString());
                     }
-                    return RedirectToAction("MainPage", "Carteirinha", new { IdPessoa = pessoa.IdPessoa });
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
+                return RedirectToAction("MainPage", "Carteirinha", new { IdPessoa = _pessoa.IdPessoa });
             }
 
             return RedirectToAction("Index", "Home");

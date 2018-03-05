@@ -25,6 +25,13 @@
                 <input asp-for="CPF" type="text" class="form-control" required minlength=11 maxlength=11 name="CPF" id="CPF" />
             </div>
             <div class="form-group">
+                        <label asp-for="Nascimento" class="col-md-2 control-label">Data Nascimento*</label>
+                        <div class="col-md-10">
+                            <input name="Nascimento" id="Nascimento" class="form-control"/>
+                            <span asp-validation-for="Nascimento" class="text-danger"></span>
+                        </div>
+                    </div>
+            <div class="form-group">
                 <label for="Foto">Foto</label>
                 <input asp-for="ImageName" type="file" class="form-control" name="ImageName" required id="Foto" accept="image/*"/>
             </div>

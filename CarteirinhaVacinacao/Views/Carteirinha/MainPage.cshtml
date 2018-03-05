@@ -1,15 +1,15 @@
 ﻿@using CarteirinhaVacinacao.Models
 @using CarteirinhaVacinacao.ViewModel
-@model CarteirinhaVacinacao.ViewModel.BoardPessoa
+@model CarteirinhaVacinacao.ViewModel.ViewModelPessoa
 
 @{
     ViewData["Title"] = "Home";
-    Layout = "~/Views/Sistema/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="contairner-fluid">
     <div class="row">
         <div class="col-md-6 col-xs-12 col-sm-12" style="padding-top: 5px; margin-top: 20px;">
-            <a href="/Carteirinha/NovaPessoaVacinada?IdPessoa=@Model.Pessoa.IdPessoa" class="btn btn-default"><div style="background-color: #0275d8; border-radius: 5px; color: #fff; font-weight: bold; text-align: Center; line-height:40px; font-size: 15px; margin-bottom: 25px;">Vincular Vacina</div></a>
+            <a href="/Carteirinha/NovaPessoaVacinada?IdPessoa=@Model.Pessoa.IdPessoa" style="btn btn-default"><div style="background-color: #0275d8; border-radius: 5px; color: #fff; font-weight: bold; text-align: Center; line-height:40px; font-size: 15px; margin-bottom: 25px;">Vincular Vacina</div></a>
             <div style="background-color: #f9f9f9; border-radius: 5px 5px 0 0; color: #000; font-weight: 600; text-align: Center; line-height:40px; font-size: 15px;">
                 ORDENS ATIVAS
             </div>
@@ -61,7 +61,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Pessoa.Nascimento" class="col-md-2 control-label">CPF*</label>
+                        <label asp-for="Pessoa.Nascimento" class="col-md-2 control-label">Data Nascimento*</label>
                         <div class="col-md-10">
                             <input name="Nascimento" id="Nascimento" class="form-control" required minlength=11 maxlength=11 value="@Model.Pessoa.Nascimento"/>
                             <span asp-validation-for="Pessoa.Nascimento" class="text-danger"></span>

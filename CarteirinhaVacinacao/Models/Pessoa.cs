@@ -19,7 +19,7 @@ namespace CarteirinhaVacinacao.Models
         public string Nome { get; set; }
         [DataType(DataType.Date)]
         public DateTime Nascimento { get; set; }
-        [Required]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Cpf cannot be empty")]
         [StringLength(11)]
         public string CPF { get; set; }
         [Display(Name = "Upload Product Image")]

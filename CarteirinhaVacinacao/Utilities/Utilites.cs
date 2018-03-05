@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace CarteirinhaVacinacao.Classes
+namespace CarteirinhaVacinacao.Utilites
 {
     public static partial class Utilites
     {
