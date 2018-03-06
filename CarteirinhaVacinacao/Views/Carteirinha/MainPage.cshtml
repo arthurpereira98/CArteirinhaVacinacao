@@ -25,8 +25,8 @@
                     <tr>
                         <td>@pv.IdPessoaVacinada</td>
                         <td>@pv.Vacina.Nome </td>
-                        <td>@pv.DataAplicacao </td>
-                        <td>@pv.DataVencimento</td>
+                        <td>@pv.DataAplicacao.ToShortDateString() </td>
+                        <td>@pv.DataVencimento.ToShortDateString()</td>
                     </tr>
                 }
             </table>
@@ -63,7 +63,7 @@
                     <div class="form-group">
                         <label asp-for="Pessoa.Nascimento" class="col-md-2 control-label">Data Nascimento*</label>
                         <div class="col-md-10">
-                            <input name="Nascimento" id="Nascimento" class="form-control" required minlength=11 maxlength=11 value="@Model.Pessoa.Nascimento"/>
+                            <input name="Nascimento" id="Nascimento" class="form-control" required minlength=11 maxlength=11 value="@Model.Pessoa.Nascimento.ToShortDateString()"/>
                             <span asp-validation-for="Pessoa.Nascimento" class="text-danger"></span>
                         </div>
                     </div>

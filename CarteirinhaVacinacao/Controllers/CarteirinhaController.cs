@@ -85,7 +85,7 @@ namespace CarteirinhaVacinacao.Controllers
 
         public List<PessoaVacinada> ObtemPessoaVacinadaPorIdPessoa(int idPessoa)
         {
-            List<PessoaVacinada> pvs = _vacinacaoContext.PessoasVacinadas.Where(x => x.IdPessoa == idPessoa).ToList();
+            List<PessoaVacinada> pvs = _vacinacaoContext.PessoasVacinadas.Where(x => x.IdPessoa == idPessoa).ToList();            
             return pvs;
         }
 
