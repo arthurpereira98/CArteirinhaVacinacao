@@ -83,15 +83,39 @@ namespace CarteirinhaVacinacao.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public List<PessoaVacinada> ObtemPessoaVacinadaPorIdPessoa(int idPessoa)
+        {
+            List<PessoaVacinada> pvs = _vacinacaoContext.PessoasVacinadas.Where(x => x.IdPessoa == idPessoa).ToList();
+            return pvs;
+        }
+
+        public Pessoa ObtemPessoaPorId(int idPessoa)
+        {
+            Pessoa pessoa = _vacinacaoContext.Pessoas.Where(x => x.IdPessoa == idPessoa).FirstOrDefault();
+            return pessoa;
+        }
+
+        public List<Vacina> ObtemVacinasPorIdPessoa(int idPessoa)
+        {
+            List<PessoaVacinada> pvs = ObtemPessoaVacinadaPorIdPessoa(idPessoa);
+            List<Vacina> vacinas = new List<Vacina>();
+            foreach (PessoaVacinada pv in pvs)
+            {
+                vacinas = _vacinacaoContext.Vacinas.Where(x => x.IdVacina == pv.IdVacina).ToList();
+            }
+            return vacinas;
+        }
+
         [HttpGet]
         public IActionResult MainPage(int idPessoa)
         {
             ViewModelPessoa _vmp = new ViewModelPessoa();
             if (!CheckSession() && idPessoa == 0) { return RedirectToAction("Index", "Home"); }
-            Pessoa pessoa = _vacinacaoContext.Pessoas.Where(x => x.IdPessoa == idPessoa).FirstOrDefault();
-            _vmp.Pessoa = _vacinacaoContext.Pessoas.Where(p => p.IdPessoa == idPessoa).FirstOrDefault();
-            _vmp.PessoasVacinadas = _vacinacaoContext.PessoasVacinadas.Where(x => x.IdPessoa == idPessoa).ToList();
-            _vmp.Vacina = _vacinacaoContext.Vacinas.Where(v => v.IdVacina == _vmp.Vacina.IdVacina).FirstOrDefault();
+            Pessoa pessoa = ObtemPessoaPorId(idPessoa);
+            List<PessoaVacinada> pvs = ObtemPessoaVacinadaPorIdPessoa(idPessoa);
+            _vmp.Pessoa = pessoa;
+            _vmp.PessoasVacinadas = pvs;
+            _vmp.Vacinas = ObtemVacinasPorIdPessoa(idPessoa);           
             return View(_vmp);
         }
 
@@ -116,11 +140,11 @@ namespace CarteirinhaVacinacao.Controllers
         }
 
         [HttpGet]
-        public IActionResult NovaPessoaVacinada(int IdPessoa)
+        public IActionResult NovaPessoaVacinada(int idPessoa)
         {
             ViewModelPessoaVacinada _vmpv = new ViewModelPessoaVacinada();
             _vmpv.Vacinas = _vacinacaoContext.Vacinas.ToList();
-            _vmpv.Pessoa = _vacinacaoContext.Pessoas.Where(p => p.IdPessoa == IdPessoa).FirstOrDefault();
+            _vmpv.Pessoa = ObtemPessoaPorId(idPessoa);
             return View(_vmpv);
         }
 
@@ -132,7 +156,7 @@ namespace CarteirinhaVacinacao.Controllers
             {
                 if (pv.IdPessoa != 0 && pv.IdVacina != 0)
                 {
-                    pv.Pessoa = _vacinacaoContext.Pessoas.Where(p => p.IdPessoa == pv.IdPessoa).FirstOrDefault();
+                    pv.Pessoa = ObtemPessoaPorId(pv.IdPessoa);
                     pv.Vacina = _vacinacaoContext.Vacinas.Where(v => v.IdVacina == pv.IdVacina).FirstOrDefault();
                     pv.DataAplicacao = DateTime.Now;
                     pv.DataVencimento = pv.DataAplicacao.AddYears(10);
