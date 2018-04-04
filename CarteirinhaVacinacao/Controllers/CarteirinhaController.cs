@@ -49,7 +49,7 @@ namespace CarteirinhaVacinacao.Controllers
                     {
                         var file = Image;
                         string webRootPath = _hostingEnvironment.WebRootPath;
-                        var uploads = Path.Combine(webRootPath, "Uploads\\Pessoas");
+                        var uploads = Path.Combine(webRootPath, "Uploads/Pessoas");
 
                         if (file.Length > 0)
                         {

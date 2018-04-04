@@ -1,16 +1,7 @@
 version: '3'
 
 services:
-  db:
-    image:mysql
-    restart:always
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: ef
-      MYSQL_USER: ef
-      MYSQL_PASSWORD: password
-
-
+  
   carteirinhavacinacao:
     image: carteirinhavacinacao
     build:

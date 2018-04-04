@@ -43,8 +43,8 @@ namespace CarteirinhaVacinacao
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                var context = serviceScope.ServiceProvider.GetRequiredService<VacinacaoContext>();
-                context.Database.EnsureCreated();
+                //var context = serviceScope.ServiceProvider.GetRequiredService<VacinacaoContext>();
+                //context.Database.EnsureCreated();
             }
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
