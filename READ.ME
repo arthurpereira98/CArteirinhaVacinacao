@@ -1,0 +1,29 @@
+Passo a Passo ciração Container Mysql
+
+1º passo: Download da imagem do MySqlCommunity, com comando:
+docker pull mysql/mysql-server
+
+2º passo: Iniciar um novo Docker Container para o MySql
+docker run --name=MySqlContainer -d mysql/mysql-server
+
+*A inicialização do container leva um tempinho, quando o server estiver pronto sera possivel saber com o comando
+docker ps, caso (health:) esteja em starting ainda aguardar , caso esteja com (health: healthy) o container ja
+pode ser usando!
+
+3º passo: visualizar a senha de root para inicializar o container criado
+docker logs MySqlContainer
+Exemplo:
+GENERATED ROOT PASSWORD: Axegh3kAJyDLaRuBemecis&EShOs
+
+4º passo: Conectar no Container Mysql
+docker exec -it MySqlContainer mysql -uroot -p
+
+*em seguida voce devera digitar a senha gerada no 3º passo
+
+5º passo: Apos conectar , deveremos alterar a senha de root para uma mais amigavel
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('password');
+
+6º passo: Criar o dataBase que utilizaremos no Projeto 
+CREATE DATABASE Vacinagestao;
+
+Agora é só rodar o Projeto !
